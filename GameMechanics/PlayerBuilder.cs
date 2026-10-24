@@ -14,7 +14,7 @@ namespace TheWorld.GameMechanics;
 /// </summary>
 public record PlayerBuilder
 {
-    
+
     // Default values for every part of a Character.  This is ONE WAY (not
     // necessarily a GOOD way) to guarantee that Build() always makes a valid
     // Character...
@@ -28,7 +28,9 @@ public record PlayerBuilder
     /// <summary>
     /// Does Nothing, except force every caller to start from one of the From... Factory Methods.
     /// </summary>
-    private PlayerBuilder() { }
+    private PlayerBuilder()
+    {
+    }
 
     /// <summary>
     /// Start with a FROM method.  The first natural place to start is the player's name.
@@ -42,21 +44,31 @@ public record PlayerBuilder
     // and it checks no more than the Factory method we wrote in Lesson 5.
     // Which means we can do better!
     //------------------------------------------------------------------------------------
-    
+
     public PlayerBuilder WithLevel(PlayerLevel level) => this with { _level = level };
     public PlayerBuilder WithHealthPoints(HealthPoints hp) => this with { _healthPoints = hp };
     public PlayerBuilder WithAbilities(AbilityScore abilities) => this with { _abilities = abilities };
     public PlayerBuilder WithWallet(Money wallet) => this with { _wallet = wallet };
-    
+
+
     /// <summary>
     /// Here's the traditional hard-core way to do this.
     /// 3d6 for each score, rolled in order, and whatever comes up is what you get.
     /// You could end up with all 3s or all 18s.  And you only get one shot.
     /// </summary>
-    public PlayerBuilder WithAbilities(Random rng) => this with
-        { _abilities = AbilityScore.Roll(rng, Dice.D6 with { Count = 3 }, Default) };
+    ///
     
-    /// <summary>
+    public PlayerBuilder WithHealthPoints(Random rng, Dice hitDice) => this with
+        {_healthPoints = HealthPoints.Roll(rng, hitDice, ClampRoll(3, hitDice.Maximum)) };
+
+    public PlayerBuilder WithAbilities(Random rng) => this with
+    {
+        _abilities = AbilityScore.Roll(rng, Dice.D6 with { Count = 3 }, Default)
+    };
+
+   
+
+/// <summary>
     /// The Fully Strategy Based approach gives the programmer the power to manipulate the outcome, or to
     /// create undesirable ones.  The scores come back unchecked.  That responsibility is outsourced to the
     /// DiceRollStrategy you hand in.

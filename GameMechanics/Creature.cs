@@ -33,6 +33,10 @@ public record Creature
     /// Builds a creature, or refuses to.  Every creature in the program comes
     /// through here.
     /// </summary>
+    ///
+    internal static Creature Create(string name, HealthPoints healthPoints, AbilityScore abilities,
+        int experienceReward) => new (name, healthPoints, abilities, experienceReward);
+    
     public static Creature Create(string name,
         int currentHealth, int maxHealth,
         int strength, int dexterity, int constitution,
@@ -57,5 +61,8 @@ public record Creature
             healthPoints,
             creatureStats,
             experienceReward);
+        
     }
+    
 }
+
